@@ -65,6 +65,36 @@ class CharactersControllerTest < ActionController::TestCase
     assert_redirected_to character_path(assigns(:character))
   end
 
+  test "should create obsidian character" do
+    u = users(:one)
+    u.obsidian_user_id = "fake"
+    u.obsidian_user_name = "fake_too"
+    u.save!
+    sign_in(users(:one))
+
+    assert_difference('Character.count') do
+      post :create, :character => { :name => "unique", :splat_id => splats(:one).id, :chronicle_id => chronicles(:one).id, :nature_id => natures(:one).id, :subnature_id => subnatures(:one).id, :ideology_id => ideologies(:one).id, :clique_id => cliques(:one).id, :obsidian_character_id => "-1" }
+    end
+
+    assert_redirected_to character_path(assigns(:character))
+    assert_not_equal Character.find_by_name("unique").obsidian_character_id, "-1", "obsidian_character_id isn't being set properly"
+  end
+
+  test "should update obsidian character" do
+    u = users(:one)
+    u.obsidian_user_id = "fake"
+    u.obsidian_user_name = "fake_too"
+    u.save!
+    sign_in(users(:one))
+
+    assert_difference('Character.count') do
+      post :create, :character => { :name => "unique", :splat_id => splats(:one).id, :chronicle_id => chronicles(:one).id, :nature_id => natures(:one).id, :subnature_id => subnatures(:one).id, :ideology_id => ideologies(:one).id, :clique_id => cliques(:one).id, :obsidian_character_id => "1" }
+    end
+
+    assert_redirected_to character_path(assigns(:character))
+    assert_not_equal Character.find_by_name("unique").obsidian_character_id, "-1", "obsidian_character_id isn't being set properly"
+  end
+
   test "shouldn't create character" do
     assert_no_difference('Character.count') do
       post :create, :character => { }

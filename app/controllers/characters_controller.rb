@@ -118,10 +118,13 @@ class CharactersController < ApplicationController
     case @character.obsidian_character_id 
     when 0
       # do not sync
-    when -1
+    when "-1"
       # create a new character
       json_character = JSON.generate({:character => {:name => @character.name, :bio => @character.obsidian_bio, :description => @character.obsidian_description}})
-      obsidian_portal.access_token.post("/v1/campaigns/#{@character.chronicle.obsidian_campaign_id}/characters.json", json_character)
+      response = obsidian_portal.access_token.post("/v1/campaigns/#{@character.chronicle.obsidian_campaign_id}/characters.json", json_character)
+      
+      @character.obsidian_character_id = JSON.parse(response.body).first["id"]
+      @character.save
     else
       # update existing character
       json_character = JSON.generate({:character => {:name => @character.name, :bio => @character.obsidian_bio, :description => @character.obsidian_description}})
@@ -143,10 +146,13 @@ class CharactersController < ApplicationController
     case @character.obsidian_character_id 
     when 0
       # do not sync
-    when -1
+    when "-1"
       # create a new character
       json_character = JSON.generate({:character => {:name => @character.name, :bio => @character.obsidian_bio, :description => @character.obsidian_description}})
-      obsidian_portal.access_token.post("/v1/campaigns/#{@character.chronicle.obsidian_campaign_id}/characters/#{@character.obsidian_character_id}.json", json_character)
+      response = obsidian_portal.access_token.post("/v1/campaigns/#{@character.chronicle.obsidian_campaign_id}/characters.json", json_character)
+      
+      @character.obsidian_character_id = JSON.parse(response.body).first["id"]
+      @character.save
     else
       # update existing character
       json_character = JSON.generate({:character => {:name => @character.name, :bio => @character.obsidian_bio, :description => @character.obsidian_description}})
